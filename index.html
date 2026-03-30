@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoEnvCL — Desarrollo Web, Cloud & Automatización para PYMEs</title>
+  <meta name="description" content="AutoEnvCL ofrece servicios de desarrollo web, e-commerce, automatización de canales digitales, consultoría personalizada y despliegue cloud en AWS. Tecnología accesible para PYMEs chilenas." />
+  <meta name="keywords" content="desarrollo web Chile, e-commerce, automatización n8n, cloud AWS, consultoría digital, páginas web low cost, PYME" />
+  <meta property="og:title" content="AutoEnvCL — Desarrollo Web, Cloud & Automatización" />
+  <meta property="og:description" content="Tecnología full stack accesible para PYMEs. Web, e-commerce, cloud AWS y automatizaciones con n8n." />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <!-- App JS -->
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+  <!-- ===== LOADING SCREEN ===== -->
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-bg"></div>
+    <div class="loading-content">
+      <div class="loading-logo">
+        <div class="logo-hex">
+          <div class="hex-inner">
+            <span class="hex-letter">A</span>
+          </div>
+          <div class="hex-ring ring-1"></div>
+          <div class="hex-ring ring-2"></div>
+          <div class="hex-ring ring-3"></div>
+        </div>
+        <div class="loading-brand">
+          <span class="brand-main">AutoEnv</span><span class="brand-accent">CL</span>
+        </div>
+      </div>
+      <div class="loading-bar-wrap">
+        <div class="loading-bar" id="loadingBar"></div>
+      </div>
+      <div class="loading-text" id="loadingText">Iniciando sistema...</div>
+    </div>
+    <div class="loading-particles" id="loadingParticles"></div>
+  </div>
+
+  <!-- ===== CURSOR ===== -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+  <div class="mouse-light" id="mouseLight"></div>
+
+  <!-- ===== PARTICLE CANVAS ===== -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#hero" class="nav-logo">
+        <div class="logo-mark">
+          <span>A</span>
+        </div>
+        <span>AutoEnv<span class="accent">CL</span></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#servicios" class="nav-link">Servicios</a></li>
+        <li><a href="#proceso" class="nav-link">Proceso</a></li>
+        <li><a href="#planes" class="nav-link">Planes</a></li>
+        <li><a href="newsletter.html" class="nav-link" id="navNewsletterBtn" style="display:none">✨ Newsletter</a></li>
+        <li><a href="#contacto" class="nav-link">Contacto</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn btn-ghost-sm" id="loginBtn">Iniciar Sesión</button>
+        <button class="btn btn-primary-sm" id="registerBtn">Crear Cuenta</button>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#servicios">Servicios</a>
+      <a href="#proceso">Proceso</a>
+      <a href="#planes">Planes</a>
+      <a href="newsletter.html" id="navNewsletterBtnMobile" style="display:none">✨ Newsletter</a>
+      <a href="#contacto">Contacto</a>
+      <div class="mobile-auth">
+        <button class="btn btn-ghost-sm" id="loginBtnMobile">Iniciar Sesión</button>
+        <button class="btn btn-primary-sm" id="registerBtnMobile">Crear Cuenta</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== AUTH MODAL ===== -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box" id="authBox">
+      <button class="modal-close" id="authClose" aria-label="Cerrar">✕</button>
+
+      <!-- Login Panel -->
+      <div class="auth-panel" id="loginPanel">
+        <div class="auth-header">
+          <div class="auth-logo-sm">
+            <span>A</span>
+          </div>
+          <h2>Bienvenido de vuelta</h2>
+          <p>Ingresa a tu cuenta AutoEnvCL</p>
+        </div>
+        <form class="auth-form" id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <div class="input-wrap">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <input type="email" id="loginEmail" placeholder="tu@email.com" required autocomplete="email" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Contraseña</label>
+            <div class="input-wrap">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password" />
+              <button type="button" class="btn-eye" data-target="loginPassword">👁</button>
+            </div>
+          </div>
+          <div id="loginError" class="auth-error" style="display:none"></div>
+          <button type="submit" class="btn btn-primary btn-full" id="loginSubmit">
+            <span>Ingresar</span>
+            <div class="btn-loader" style="display:none"></div>
+          </button>
+        </form>
+        <p class="auth-switch">¿No tienes cuenta? <button class="link-btn" id="switchToRegister">Regístrate gratis</button></p>
+      </div>
+
+      <!-- Register Panel -->
+      <div class="auth-panel" id="registerPanel" style="display:none">
+        <div class="auth-header">
+          <div class="auth-logo-sm">
+            <span>A</span>
+          </div>
+          <h2>Crea tu cuenta</h2>
+          <p>Únete a la revolución digital para PYMEs</p>
+        </div>
+        <form class="auth-form" id="registerForm">
+          <div class="form-group">
+            <label for="regName">Nombre completo</label>
+            <div class="input-wrap">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="text" id="regName" placeholder="Tu nombre" required autocomplete="name" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="regEmail">Email</label>
+            <div class="input-wrap">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <input type="email" id="regEmail" placeholder="tu@email.com" required autocomplete="email" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="regPassword">Contraseña</label>
+            <div class="input-wrap">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" id="regPassword" placeholder="Mín. 8 caracteres" required autocomplete="new-password" />
+              <button type="button" class="btn-eye" data-target="regPassword">👁</button>
+            </div>
+          </div>
+          <div id="registerError" class="auth-error" style="display:none"></div>
+          <div id="registerSuccess" class="auth-success" style="display:none"></div>
+          <button type="submit" class="btn btn-primary btn-full" id="registerSubmit">
+            <span>Crear Cuenta Gratis</span>
+            <div class="btn-loader" style="display:none"></div>
+          </button>
+        </form>
+        <p class="auth-switch">¿Ya tienes cuenta? <button class="link-btn" id="switchToLogin">Inicia sesión</button></p>
+      </div>
+
+      <!-- Success Panel -->
+      <div class="auth-panel" id="successPanel" style="display:none">
+        <div class="auth-success-state">
+          <div class="success-icon">✓</div>
+          <h2>¡Cuenta creada!</h2>
+          <p>Revisa tu email para confirmar tu conta. Luego podrás iniciar sesión.</p>
+          <button class="btn btn-primary btn-full" id="goToLogin">Ir a Iniciar Sesión</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== USER MENU (when logged in) ===== -->
+  <div class="user-menu" id="userMenu" style="display:none">
+    <button class="user-btn" id="userBtn">
+      <div class="user-avatar" id="userAvatar">U</div>
+      <span id="userNameDisplay">Usuario</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="user-info-box" id="userInfoBox"></div>
+      <hr class="dropdown-divider" />
+      <a href="#planes" class="dropdown-item">📦 Mis Planes</a>
+      <a href="newsletter.html" class="dropdown-item">📰 Newsletter</a>
+      <a href="#contacto" class="dropdown-item">💬 Soporte</a>
+      <button class="dropdown-item dropdown-logout" id="logoutBtn">🚪 Cerrar Sesión</button>
+    </div>
+  </div>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge reveal">
+        <span class="badge-pulse"></span>
+        <span>🇨🇱 Soluciones tech para PYMEs chilenas</span>
+      </div>
+      <h1 class="hero-title reveal reveal-d1">
+        Tu negocio merece<br />
+        <span class="gradient-text">tecnología de primer nivel.</span>
+      </h1>
+      <p class="hero-sub reveal reveal-d2">
+        Desarrollamos tu presencia digital, automatizamos tus procesos y<br class="hide-sm" />
+        desplegamos tu negocio en la nube — <strong>a precios que sí puedes pagar.</strong>
+      </p>
+      <div class="hero-cta reveal reveal-d3">
+        <a href="#servicios" class="btn btn-primary btn-glow btn-lg" id="heroMainCta">
+          <span>Ver Servicios</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#contacto" class="btn btn-ghost btn-lg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Hablar con nosotros</span>
+        </a>
+      </div>
+
+      <!-- Floating tech badges -->
+      <div class="hero-tech reveal reveal-d4">
+        <div class="tech-badge">
+          <span class="tech-dot green"></span>WordPress & Next.js
+        </div>
+        <div class="tech-badge">
+          <span class="tech-dot blue"></span>AWS Cloud
+        </div>
+        <div class="tech-badge">
+          <span class="tech-dot purple"></span>n8n Automation
+        </div>
+        <div class="tech-badge">
+          <span class="tech-dot orange"></span>Supabase & React
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Cards Visual -->
+    <div class="hero-visual reveal reveal-d3">
+      <div class="hv-card hv-card-1">
+        <div class="hv-icon">🌐</div>
+        <div class="hv-info">
+          <div class="hv-label">Sitio Web</div>
+          <div class="hv-val">Desplegado ✓</div>
+        </div>
+      </div>
+      <div class="hv-card hv-card-2">
+        <div class="hv-icon">⚡</div>
+        <div class="hv-info">
+          <div class="hv-label">Automatización</div>
+          <div class="hv-val">Activa 24/7</div>
+        </div>
+      </div>
+      <div class="hv-card hv-card-3">
+        <div class="hv-icon">☁️</div>
+        <div class="hv-info">
+          <div class="hv-label">AWS Cloud</div>
+          <div class="hv-val">99.9% uptime</div>
+        </div>
+      </div>
+      <div class="hv-card hv-card-4">
+        <div class="hv-icon">🛒</div>
+        <div class="hv-info">
+          <div class="hv-label">E-Commerce</div>
+          <div class="hv-val">+320% ventas</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>scroll</span>
+    </div>
+  </section>
+
+  <!-- ===== STATS ===== -->
+  <section class="stats-band" id="stats">
+    <div class="container">
+      <div class="stats-row">
+        <div class="stat-item reveal">
+          <span class="stat-num" data-target="50" data-suffix="+">0+</span>
+          <span class="stat-desc">Proyectos entregados</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item reveal" data-delay="100">
+          <span class="stat-num" data-target="99" data-suffix="%">0%</span>
+          <span class="stat-desc">Clientes satisfechos</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item reveal" data-delay="200">
+          <span class="stat-num" data-target="24" data-suffix="/7">0/7</span>
+          <span class="stat-desc">Soporte disponible</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item reveal" data-delay="300">
+          <span class="stat-num" data-target="3" data-suffix="x">0x</span>
+          <span class="stat-desc">ROI promedio</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVICIOS ===== -->
+  <section class="section servicios" id="servicios">
+    <div class="section-glow-top"></div>
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Nuestros Servicios</span>
+        <h2 class="section-title">Todo lo que tu empresa<br /><span class="gradient-text">necesita para crecer.</span></h2>
+        <p class="section-sub">Haz clic en cualquier servicio para ver los detalles y opciones de contratación.</p>
+      </div>
+
+      <div class="services-grid">
+
+        <!-- Service 1: Web básica -->
+        <div class="srv-card reveal" data-delay="0" id="srv1">
+          <div class="srv-card-front">
+            <div class="srv-icon-wrap srv-color-1">🌐</div>
+            <div class="srv-content">
+              <div class="srv-tag">Low Cost</div>
+              <h3>Páginas Web Básicas</h3>
+              <p>Presencia profesional en internet sin romper el presupuesto. Diseño moderno, responsive y optimizado para SEO.</p>
+              <div class="srv-features">
+                <span>✓ Diseño responsive</span>
+                <span>✓ SEO básico</span>
+                <span>✓ Formulario de contacto</span>
+                <span>✓ Hosting incluido (1 año)</span>
+              </div>
+            </div>
+            <button class="srv-toggle" aria-expanded="false">
+              Ver más detalles
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+          <div class="srv-expand" style="display:none">
+            <div class="srv-expand-content">
+              <div class="srv-details-row">
+                <div class="srv-detail-block">
+                  <h4>¿Qué incluye?</h4>
+                  <ul>
+                    <li>Hasta 5 secciones personalizadas</li>
+                    <li>Integración con Google Analytics</li>
+                    <li>SSL gratuito (HTTPS)</li>
+                    <li>Optimización de velocidad</li>
+                    <li>Panel de administración</li>
+                    <li>Capacitación básica de uso</li>
+                  </ul>
+                </div>
+                <div class="srv-detail-block">
+                  <h4>Tecnologías</h4>
+                  <div class="tech-pills">
+                    <span>WordPress</span>
+                    <span>HTML/CSS</span>
+                    <span>Next.js</span>
+                    <span>Astro</span>
+                  </div>
+                  <h4 style="margin-top:16px">Tiempo de entrega</h4>
+                  <p class="srv-delivery">⏱ 5 a 10 días hábiles</p>
+                </div>
+              </div>
+              <div class="srv-pricing-preview">
+                <div class="srv-price-from">Desde</div>
+                <div class="srv-price-val">$150.000 CLP</div>
+                <a href="#planes" class="btn btn-primary btn-sm">Ver planes completos</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 2: E-commerce -->
+        <div class="srv-card reveal" data-delay="100" id="srv2">
+          <div class="srv-card-front">
+            <div class="srv-icon-wrap srv-color-2">🛒</div>
+            <div class="srv-content">
+              <div class="srv-tag srv-tag-popular">Más solicitado</div>
+              <h3>E-Commerce Profesional</h3>
+              <p>Tienda online completa con pagos integrados, gestión de inventario y experiencia de compra premium.</p>
+              <div class="srv-features">
+                <span>✓ Pasarela de pago</span>
+                <span>✓ Gestión de inventario</span>
+                <span>✓ Panel de admin</span>
+                <span>✓ Email transaccional</span>
+              </div>
+            </div>
+            <button class="srv-toggle" aria-expanded="false">
+              Ver más detalles
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+          <div class="srv-expand" style="display:none">
+            <div class="srv-expand-content">
+              <div class="srv-details-row">
+                <div class="srv-detail-block">
+                  <h4>¿Qué incluye?</h4>
+                  <ul>
+                    <li>Catálogo de productos ilimitados</li>
+                    <li>WebPay Plus / Mercado Pago</li>
+                    <li>Gestión de pedidos y envíos</li>
+                    <li>Recuperación de carritos</li>
+                    <li>Dashboard de ventas</li>
+                    <li>Integración con redes sociales</li>
+                  </ul>
+                </div>
+                <div class="srv-detail-block">
+                  <h4>Tecnologías</h4>
+                  <div class="tech-pills">
+                    <span>WooCommerce</span>
+                    <span>Shopify</span>
+                    <span>Next.js</span>
+                    <span>React</span>
+                  </div>
+                  <h4 style="margin-top:16px">Tiempo de entrega</h4>
+                  <p class="srv-delivery">⏱ 15 a 25 días hábiles</p>
+                </div>
+              </div>
+              <div class="srv-pricing-preview">
+                <div class="srv-price-from">Desde <span class="price-old">$900.000</span></div>
+                <div class="srv-price-val">$590.000 CLP</div>
+                <a href="#planes" class="btn btn-primary btn-sm">Ver planes completos</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 3: Automatización -->
+        <div class="srv-card reveal" data-delay="200" id="srv3">
+          <div class="srv-card-front">
+            <div class="srv-icon-wrap srv-color-3">⚡</div>
+            <div class="srv-content">
+              <div class="srv-tag">n8n Powered</div>
+              <h3>Automatización Digital</h3>
+              <p>Conecta tus canales de venta y automatiza respuestas, seguimientos, reportes y flujos de trabajo.</p>
+              <div class="srv-features">
+                <span>✓ WhatsApp Business API</span>
+                <span>✓ Email marketing</span>
+                <span>✓ CRM integrado</span>
+                <span>✓ Flujos personalizados</span>
+              </div>
+            </div>
+            <button class="srv-toggle" aria-expanded="false">
+              Ver más detalles
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+          <div class="srv-expand" style="display:none">
+            <div class="srv-expand-content">
+              <div class="srv-details-row">
+                <div class="srv-detail-block">
+                  <h4>¿Qué incluye?</h4>
+                  <ul>
+                    <li>Chatbot para WhatsApp/Instagram</li>
+                    <li>Automatización de seguimientos</li>
+                    <li>Integración con Google Sheets</li>
+                    <li>Notificaciones automáticas</li>
+                    <li>Reportes semanales</li>
+                    <li>Soporte y mantenimiento</li>
+                  </ul>
+                </div>
+                <div class="srv-detail-block">
+                  <h4>Tecnologías</h4>
+                  <div class="tech-pills">
+                    <span>n8n</span>
+                    <span>Make</span>
+                    <span>WhatsApp API</span>
+                    <span>Zapier</span>
+                  </div>
+                  <h4 style="margin-top:16px">Tiempo de implementación</h4>
+                  <p class="srv-delivery">⏱ 7 a 14 días hábiles</p>
+                </div>
+              </div>
+              <div class="srv-pricing-preview">
+                <div class="srv-price-from">Desde</div>
+                <div class="srv-price-val">$180.000 CLP/mes</div>
+                <a href="#planes" class="btn btn-primary btn-sm">Ver planes completos</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 4: Consultoría -->
+        <div class="srv-card reveal" data-delay="300" id="srv4">
+          <div class="srv-card-front">
+            <div class="srv-icon-wrap srv-color-4">🎯</div>
+            <div class="srv-content">
+              <div class="srv-tag">Personalizado</div>
+              <h3>Consultoría para Proyectos</h3>
+              <p>Sesiones 1:1 para diseñar la arquitectura técnica de tu proyecto, evaluar tecnologías y definir hoja de ruta.</p>
+              <div class="srv-features">
+                <span>✓ Análisis de requerimientos</span>
+                <span>✓ Hoja de ruta técnica</span>
+                <span>✓ Selección de stack</span>
+                <span>✓ Estimación de costos</span>
+              </div>
+            </div>
+            <button class="srv-toggle" aria-expanded="false">
+              Ver más detalles
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+          <div class="srv-expand" style="display:none">
+            <div class="srv-expand-content">
+              <div class="srv-details-row">
+                <div class="srv-detail-block">
+                  <h4>¿Qué incluye?</h4>
+                  <ul>
+                    <li>Sesión inicial de 2 horas</li>
+                    <li>Documento de arquitectura</li>
+                    <li>Comparativa de tecnologías</li>
+                    <li>Plan de implementación</li>
+                    <li>Revisión de código existente</li>
+                    <li>Seguimiento post-sesión</li>
+                  </ul>
+                </div>
+                <div class="srv-detail-block">
+                  <h4>Modalidad</h4>
+                  <div class="tech-pills">
+                    <span>Google Meet</span>
+                    <span>Zoom</span>
+                    <span>Presencial CL</span>
+                  </div>
+                  <h4 style="margin-top:16px">Disponibilidad</h4>
+                  <p class="srv-delivery">📅 Agenda tu sesión hoy</p>
+                </div>
+              </div>
+              <div class="srv-pricing-preview">
+                <div class="srv-price-from">Desde</div>
+                <div class="srv-price-val">$80.000 CLP/hora</div>
+                <a href="#contacto" class="btn btn-primary btn-sm">Agendar sesión</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 5: Cloud Deploy -->
+        <div class="srv-card srv-card-wide reveal" data-delay="400" id="srv5">
+          <div class="srv-card-front">
+            <div class="srv-icon-wrap srv-color-5">☁️</div>
+            <div class="srv-content">
+              <div class="srv-tag">AWS Ready</div>
+              <h3>Despliegue Cloud & Web Apps</h3>
+              <p>Llevamos tu aplicación a la nube con escalabilidad, seguridad y alta disponibilidad. Desde startups hasta enterprise.</p>
+              <div class="srv-features">
+                <span>✓ Arquitectura AWS</span>
+                <span>✓ CI/CD Pipeline</span>
+                <span>✓ Docker & Kubernetes</span>
+                <span>✓ Monitoreo 24/7</span>
+                <span>✓ Backups automáticos</span>
+                <span>✓ SSL & seguridad</span>
+              </div>
+            </div>
+            <button class="srv-toggle" aria-expanded="false">
+              Ver más detalles
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+          <div class="srv-expand" style="display:none">
+            <div class="srv-expand-content">
+              <div class="srv-details-row">
+                <div class="srv-detail-block">
+                  <h4>¿Qué incluye?</h4>
+                  <ul>
+                    <li>Setup inicial de infraestructura</li>
+                    <li>Configuración de dominios y DNS</li>
+                    <li>Balanceo de carga y autoscaling</li>
+                    <li>Base de datos administrada (RDS)</li>
+                    <li>CDN con CloudFront</li>
+                    <li>Alertas y monitoreo (CloudWatch)</li>
+                    <li>Política de recuperación ante desastres</li>
+                  </ul>
+                </div>
+                <div class="srv-detail-block">
+                  <h4>Tecnologías</h4>
+                  <div class="tech-pills">
+                    <span>AWS EC2</span>
+                    <span>Lambda</span>
+                    <span>S3</span>
+                    <span>RDS</span>
+                    <span>Docker</span>
+                    <span>GitHub Actions</span>
+                    <span>Vercel</span>
+                    <span>Railway</span>
+                  </div>
+                  <h4 style="margin-top:16px">Tiempo de setup</h4>
+                  <p class="srv-delivery">⏱ 3 a 7 días hábiles</p>
+                </div>
+              </div>
+              <div class="srv-pricing-preview">
+                <div class="srv-price-from">Setup desde</div>
+                <div class="srv-price-val">$250.000 CLP + mantención</div>
+                <a href="#contacto" class="btn btn-primary btn-sm">Solicitar cotización</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROCESO ===== -->
+  <section class="section proceso" id="proceso">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Cómo Trabajamos</span>
+        <h2 class="section-title">De la idea al<br /><span class="gradient-text">lanzamiento en 4 pasos.</span></h2>
+      </div>
+      <div class="proceso-grid">
+        <div class="proceso-step reveal" data-delay="0">
+          <div class="ps-num">01</div>
+          <div class="ps-icon-wrap">
+            <div class="ps-icon">🔍</div>
+            <div class="ps-ring"></div>
+          </div>
+          <div class="ps-content">
+            <h3>Diagnóstico</h3>
+            <p>Analizamos tu negocio, tus objetivos y los puntos de dolor para diseñar la solución perfecta.</p>
+          </div>
+        </div>
+        <div class="proceso-connector"></div>
+        <div class="proceso-step reveal" data-delay="150">
+          <div class="ps-num">02</div>
+          <div class="ps-icon-wrap">
+            <div class="ps-icon">🎨</div>
+            <div class="ps-ring"></div>
+          </div>
+          <div class="ps-content">
+            <h3>Diseño & Planificación</h3>
+            <p>Prototipamos, definimos la arquitectura y presentamos mockups antes de escribir una línea de código.</p>
+          </div>
+        </div>
+        <div class="proceso-connector"></div>
+        <div class="proceso-step reveal" data-delay="300">
+          <div class="ps-num">03</div>
+          <div class="ps-icon-wrap">
+            <div class="ps-icon">⚙️</div>
+            <div class="ps-ring"></div>
+          </div>
+          <div class="ps-content">
+            <h3>Desarrollo & Testing</h3>
+            <p>Construimos con metodología ágil. Entregas parciales, feedback continuo y pruebas exhaustivas.</p>
+          </div>
+        </div>
+        <div class="proceso-connector"></div>
+        <div class="proceso-step reveal" data-delay="450">
+          <div class="ps-num">04</div>
+          <div class="ps-icon-wrap">
+            <div class="ps-icon">🚀</div>
+            <div class="ps-ring"></div>
+          </div>
+          <div class="ps-content">
+            <h3>Lanzamiento & Soporte</h3>
+            <p>Desplegamos, capacitamos y te acompañamos post-lanzamiento para garantizar el éxito.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PLANES / PRECIOS ===== -->
+  <section class="section planes" id="planes">
+    <div class="section-glow-top"></div>
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Planes & Precios</span>
+        <h2 class="section-title">Transparencia total.<br /><span class="gradient-text">Sin sorpresas.</span></h2>
+        <p class="section-sub">Selecciona el plan que mejor se adapta a tus necesidades. Todos incluyen soporte directo.</p>
+      </div>
+
+      <div class="planes-grid">
+
+        <!-- Plan Starter -->
+        <div class="plan-card reveal" data-delay="0">
+          <div class="plan-header">
+            <div class="plan-icon">🌱</div>
+            <div class="plan-name">Starter</div>
+            <div class="plan-desc">Página web profesional para comenzar</div>
+          </div>
+          <div class="plan-price">
+            <span class="plan-currency">CLP</span>
+            <span class="plan-amount">150.000</span>
+            <span class="plan-period">pago único</span>
+          </div>
+          <ul class="plan-features">
+            <li><span class="pf-check">✓</span> Sitio web hasta 5 secciones</li>
+            <li><span class="pf-check">✓</span> Diseño responsive</li>
+            <li><span class="pf-check">✓</span> SEO básico</li>
+            <li><span class="pf-check">✓</span> Formulario de contacto</li>
+            <li><span class="pf-check">✓</span> 1 año de hosting</li>
+            <li><span class="pf-check">✓</span> Soporte 30 días</li>
+            <li class="pf-no"><span class="pf-x">✗</span> E-commerce</li>
+            <li class="pf-no"><span class="pf-x">✗</span> Automatizaciones</li>
+          </ul>
+          <a href="#contacto" class="btn btn-plan" id="planStarterBtn">
+            Contratar Starter
+          </a>
+        </div>
+
+        <!-- Plan Pro (featured) -->
+        <div class="plan-card plan-featured reveal" data-delay="150">
+          <div class="plan-badge">⭐ Más Popular</div>
+          <div class="plan-header">
+            <div class="plan-icon">🚀</div>
+            <div class="plan-name">Pro</div>
+            <div class="plan-desc">E-commerce + automatizaciones básicas</div>
+          </div>
+          <div class="plan-price">
+            <span class="plan-currency">CLP</span>
+            <span class="plan-amount">590.000</span>
+            <span class="plan-period">pago único + $90K/mes</span>
+          </div>
+          <ul class="plan-features">
+            <li><span class="pf-check">✓</span> Todo del plan Starter</li>
+            <li><span class="pf-check">✓</span> Tienda online completa</li>
+            <li><span class="pf-check">✓</span> Pasarela de pago integrada</li>
+            <li><span class="pf-check">✓</span> Panel de gestión de pedidos</li>
+            <li><span class="pf-check">✓</span> 1 flujo de automatización n8n</li>
+            <li><span class="pf-check">✓</span> Email transaccional</li>
+            <li><span class="pf-check">✓</span> Soporte 90 días</li>
+            <li><span class="pf-check">✓</span> Capacitación incluida</li>
+          </ul>
+          <a href="#contacto" class="btn btn-plan btn-plan-featured" id="planProBtn">
+            Contratar Pro
+          </a>
+        </div>
+
+        <!-- Plan Enterprise -->
+        <div class="plan-card reveal" data-delay="300">
+          <div class="plan-header">
+            <div class="plan-icon">🏢</div>
+            <div class="plan-name">Enterprise</div>
+            <div class="plan-desc">Solución completa cloud + automatización total</div>
+          </div>
+          <div class="plan-price">
+            <span class="plan-currency">CLP</span>
+            <span class="plan-amount">A medida</span>
+            <!-- <span class="plan-period">mensual</span> -->
+          </div>
+          <ul class="plan-features">
+            <li><span class="pf-check">✓</span> Todo del plan Pro</li>
+            <li><span class="pf-check">✓</span> Arquitectura AWS dedicada</li>
+            <li><span class="pf-check">✓</span> Automatizaciones ilimitadas</li>
+            <li><span class="pf-check">✓</span> CI/CD Pipeline</li>
+            <li><span class="pf-check">✓</span> Monitoreo 24/7 con alertas</li>
+            <li><span class="pf-check">✓</span> SLA garantizado</li>
+            <li><span class="pf-check">✓</span> Consultoría mensual</li>
+            <li><span class="pf-check">✓</span> Soporte prioritario</li>
+          </ul>
+          <a href="#contacto" class="btn btn-plan" id="planEnterpriseBtn">
+            Solicitar Cotización
+          </a>
+        </div>
+
+      </div>
+
+      <p class="planes-note reveal">💳 Transferencia bancaria disponible. Factura electrónica incluida.</p>
+    </div>
+  </section>
+
+  <!-- ===== TECNOLOGÍAS ===== -->
+  <section class="section tech-section" id="tecnologias">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Stack Tecnológico</span>
+        <h2 class="section-title">Herramientas de<br /><span class="gradient-text">clase mundial.</span></h2>
+      </div>
+      <div class="tech-scroll-wrapper">
+        <div class="tech-track" id="techTrack">
+          <div class="tech-logo-item">AWS <span>Cloud</span></div>
+          <div class="tech-logo-item">n8n <span>Automation</span></div>
+          <div class="tech-logo-item">Next.js <span>Framework</span></div>
+          <div class="tech-logo-item">Supabase <span>Database</span></div>
+          <div class="tech-logo-item">React <span>Library</span></div>
+          <div class="tech-logo-item">Docker <span>Container</span></div>
+          <div class="tech-logo-item">GitHub <span>Actions</span></div>
+          <div class="tech-logo-item">WordPress <span>CMS</span></div>
+          <div class="tech-logo-item">WooCommerce <span>E-Commerce</span></div>
+          <div class="tech-logo-item">React <span>Frontend</span></div>
+          <!-- Duplicates for infinite loop -->
+          <div class="tech-logo-item">AWS <span>Cloud</span></div>
+          <div class="tech-logo-item">n8n <span>Automation</span></div>
+          <div class="tech-logo-item">Next.js <span>Framework</span></div>
+          <div class="tech-logo-item">Supabase <span>Database</span></div>
+          <div class="tech-logo-item">React <span>Library</span></div>
+          <div class="tech-logo-item">Docker <span>Container</span></div>
+          <div class="tech-logo-item">GitHub <span>Actions</span></div>
+          <div class="tech-logo-item">WordPress <span>CMS</span></div>
+          <div class="tech-logo-item">WooCommerce <span>E-Commerce</span></div>
+          <div class="tech-logo-item">React <span>Frontend</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACTO ===== -->
+  <section class="section contacto" id="contacto">
+    <div class="section-glow-top"></div>
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Contacto</span>
+        <h2 class="section-title">¿Listo para dar el<br /><span class="gradient-text">siguiente paso?</span></h2>
+        <p class="section-sub">Cuéntanos tu proyecto y te respondemos en menos de 24 horas.</p>
+      </div>
+
+      <div class="contacto-layout">
+        <div class="contacto-info reveal">
+          <div class="contact-card">
+            <div class="cc-icon">📱</div>
+            <div>
+              <div class="cc-label">WhatsApp / Teléfono</div>
+              <a href="https://wa.me/56990632995?text=Hola!%20Vi%20AutoEnvCL%20y%20quiero%20información%20sobre%20sus%20servicios" target="_blank" class="cc-value">+56 9 9063 2995</a>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="cc-icon">✉️</div>
+            <div>
+              <div class="cc-label">Email</div>
+              <a href="mailto:edufeli.bug@gmail.com" class="cc-value">edufeli.bug@gmail.com</a>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="cc-icon">📸</div>
+            <div>
+              <div class="cc-label">Instagram</div>
+              <a href="https://instagram.com/AutoEnvCL" target="_blank" class="cc-value">@AutoEnvCL</a>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="cc-icon">🌍</div>
+            <div>
+              <div class="cc-label">Ubicación</div>
+              <span class="cc-value">Chile — Atención remota a todo el país</span>
+            </div>
+          </div>
+
+          <a href="https://wa.me/56990632995?text=Hola!%20Vi%20AutoEnvCL%20y%20quiero%20información%20sobre%20sus%20servicios" target="_blank" class="btn btn-whatsapp btn-full">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.397 5.608L0 24l6.545-1.38A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.001-1.366l-.36-.214-3.716.976.999-3.642-.235-.374A9.818 9.818 0 1112 21.818z"/></svg>
+            Escribir por WhatsApp
+          </a>
+        </div>
+
+        <div class="contacto-form-wrap reveal" data-delay="200">
+          <form class="contacto-form" id="contactForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cName">Nombre</label>
+                <div class="input-wrap">
+                  <input type="text" id="cName" placeholder="Tu nombre" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="cEmail">Email</label>
+                <div class="input-wrap">
+                  <input type="email" id="cEmail" placeholder="tu@email.com" required />
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cService">Servicio de interés</label>
+              <div class="input-wrap input-select">
+                <select id="cService" required>
+                  <option value="" disabled selected>Selecciona un servicio...</option>
+                  <option value="web">Página web básica</option>
+                  <option value="ecommerce">E-Commerce</option>
+                  <option value="automation">Automatización digital</option>
+                  <option value="consulting">Consultoría de proyecto</option>
+                  <option value="cloud">Despliegue cloud</option>
+                  <option value="other">Otro / No sé por dónde empezar</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cMessage">Cuéntanos tu proyecto</label>
+              <div class="input-wrap">
+                <textarea id="cMessage" rows="5" placeholder="Describe brevemente qué necesitas, tu presupuesto estimado y cualquier detalle relevante..." required></textarea>
+              </div>
+            </div>
+            <div id="contactError" class="auth-error" style="display:none"></div>
+            <div id="contactSuccess" class="auth-success" style="display:none"></div>
+            <button type="submit" class="btn btn-primary btn-full btn-glow" id="contactSubmit">
+              <span>Enviar Mensaje</span>
+              <div class="btn-loader" style="display:none"></div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+            </button>
+            <p class="form-note">🔒 Tu información es privada y segura. Respondemos en &lt;24 horas.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-glow"></div>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#hero" class="nav-logo footer-logo">
+            <div class="logo-mark">A</div>
+            <span>AutoEnv<span class="accent">CL</span></span>
+          </a>
+          <p>Soluciones digitales de clase mundial para PYMEs chilenas. Desarrollo web, e-commerce, cloud computing con AWS y automatizaciones con n8n.</p>
+          <div class="footer-social">
+            <a href="https://instagram.com/AutoEnvCL" target="_blank" aria-label="Instagram" class="social-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="https://wa.me/56990632995" target="_blank" aria-label="WhatsApp" class="social-link">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.397 5.608L0 24l6.545-1.38A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.001-1.366l-.36-.214-3.716.976.999-3.642-.235-.374A9.818 9.818 0 1112 21.818z"/></svg>
+            </a>
+            <a href="mailto:edufeli.bug@gmail.com" aria-label="Email" class="social-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Servicios</h4>
+          <ul>
+            <li><a href="#servicios">Páginas Web</a></li>
+            <li><a href="#servicios">E-Commerce</a></li>
+            <li><a href="#servicios">Automatización</a></li>
+            <li><a href="#servicios">Consultoría</a></li>
+            <li><a href="#servicios">Cloud AWS</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Empresa</h4>
+          <ul>
+            <li><a href="#proceso">Cómo trabajamos</a></li>
+            <li><a href="#planes">Planes y precios</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Contacto Directo</h4>
+          <ul>
+            <li><a href="https://wa.me/56990632995" target="_blank">+56 9 9063 2995</a></li>
+            <li><a href="mailto:edufeli.bug@gmail.com">edufeli.bug@gmail.com</a></li>
+            <li><a href="https://instagram.com/AutoEnvCL" target="_blank">@AutoEnvCL</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2025 AutoEnvCL. Todos los derechos reservados. Hecho con ❤️ en Chile 🇨🇱</p>
+        <div class="footer-bottom-links">
+          <a href="#" id="privacyLink">Política de Privacidad</a>
+          <span>·</span>
+          <a href="#" id="termsLink">Términos de Servicio</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notifications -->
+  <div id="toastContainer" class="toast-container"></div>
+
+</body>
+</html>

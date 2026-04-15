@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" fill="none">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00E5FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0097A7;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Circuit board A icon -->
+  <g filter="url(#glow)">
+    <!-- A shape with circuit motif -->
+    <polygon points="18,48 30,12 42,48" fill="none" stroke="url(#logoGrad)" stroke-width="2.5" stroke-linejoin="round"/>
+    <line x1="22" y1="36" x2="38" y2="36" stroke="url(#logoGrad)" stroke-width="2.5"/>
+    <!-- Circuit nodes on A -->
+    <circle cx="30" cy="12" r="2.5" fill="#00E5FF"/>
+    <circle cx="18" cy="48" r="2" fill="#00E5FF" opacity="0.7"/>
+    <circle cx="42" cy="48" r="2" fill="#00E5FF" opacity="0.7"/>
+    <circle cx="22" cy="36" r="1.5" fill="#00E5FF"/>
+    <circle cx="38" cy="36" r="1.5" fill="#00E5FF"/>
+    <!-- Circuit traces extending from A -->
+    <line x1="42" y1="48" x2="50" y2="48" stroke="#00E5FF" stroke-width="1" opacity="0.5"/>
+    <line x1="50" y1="48" x2="50" y2="44" stroke="#00E5FF" stroke-width="1" opacity="0.5"/>
+    <circle cx="50" cy="44" r="1.2" fill="#00E5FF" opacity="0.5"/>
+  </g>
+
+  <!-- AutoEnvCL text -->
+  <text x="58" y="36" font-family="'Orbitron', 'Courier New', monospace" font-size="22" font-weight="700" fill="url(#logoGrad)" filter="url(#glow)" letter-spacing="1">Auto</text>
+  <text x="108" y="36" font-family="'Orbitron', 'Courier New', monospace" font-size="22" font-weight="400" fill="#E0F7FA" letter-spacing="1">Env</text>
+  <text x="148" y="36" font-family="'Orbitron', 'Courier New', monospace" font-size="22" font-weight="700" fill="url(#logoGrad)" filter="url(#glow)" letter-spacing="1">CL</text>
+
+  <!-- Underline circuit trace -->
+  <line x1="58" y1="44" x2="180" y2="44" stroke="#00E5FF" stroke-width="0.8" opacity="0.3"/>
+  <circle cx="58" cy="44" r="1.5" fill="#00E5FF" opacity="0.5"/>
+  <circle cx="180" cy="44" r="1.5" fill="#00E5FF" opacity="0.5"/>
+
+  <!-- Tagline -->
+  <text x="58" y="55" font-family="'Space Grotesk', Arial, sans-serif" font-size="8" font-weight="400" fill="#00E5FF" opacity="0.6" letter-spacing="3">AGENTES AUTÓNOMOS DE IA</text>
+</svg>

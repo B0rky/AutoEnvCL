@@ -448,11 +448,12 @@ class BrainScene {          // nombre interno mantenido para compatibilidad
       ctx.fillText(name,cx,cy+w*0.27);
     };
 
-    [{e:'💬',n:'WhatsApp',c:'0,210,80',  x:0.0, y:1.6},
-     {e:'☁️',n:'AWS',     c:'220,140,0', x:1.1, y:1.65},
-     {e:'💼',n:'Slack',   c:'100,60,180',x:-1.1,y:1.65},
-     {e:'🔗',n:'n8n',     c:'220,60,120',x:-0.5,y:-1.55},
-     {e:'🧠',n:'Claude',  c:'0,170,204', x:0.5, y:-1.55},
+    [{e:'💬',n:'WhatsApp',        c:'0,210,80',   x:0.0,  y:1.70},
+     {e:'☁️',n:'AWS',            c:'220,140,0',  x:1.20, y:1.00},
+     {e:'📧',n:'Gmail',          c:'220,60,60',  x:-1.20,y:1.00},
+     {e:'📅',n:'Calendario',     c:'60,120,220', x:1.20, y:-0.90},
+     {e:'⏱',n:'24/7',           c:'0,229,255',  x:0.0,  y:-1.70},
+     {e:'📁',n:'Docs internos',  c:'150,100,220',x:-1.20,y:-0.90},
     ].forEach((d,i) => {
       const sp = makeSprite((ctx,w,h) => appIcon(ctx,w,h,d.e,d.n,d.c),110,110,d.x,d.y,0.2);
       sp.userData.isIcon=true; sp.userData.orbitAngle=Math.atan2(d.y,d.x);
@@ -573,7 +574,7 @@ class BrainScene {          // nombre interno mantenido para compatibilidad
     this.robotGroup.position.y += (targetY - this.robotGroup.position.y) * 0.04;
 
     // ── Rotación idle ─────────────────────────────
-    const rotSpeed = 0.004 * (1 - this.splitAmount * 0.9);
+    const rotSpeed = 0.0014 * (1 - this.splitAmount * 0.9);
     this.robotGroup.rotation.y += rotSpeed;
     // Sigue el mouse suavemente (cabeza)
     if(this.headGroup) {

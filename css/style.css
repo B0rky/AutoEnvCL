@@ -671,13 +671,14 @@ section { position: relative; z-index: 2; }
   gap: 8px;
   margin-bottom: 8px;
 }
-.price-currency { font-size: 18px; font-weight: 500; color: var(--text-dim); }
+.price-currency { font-size: 15px; font-weight: 500; color: var(--text-dim); letter-spacing: 1px; }
 .price-amount {
   font-family: var(--font-head);
-  font-size: 3rem;
+  font-size: 2.4rem;
   font-weight: 700;
   color: var(--text);
   line-height: 1;
+  letter-spacing: -0.5px;
 }
 .price-unit { font-size: 13px; color: var(--text-dim); }
 .pricing-impl {
@@ -727,6 +728,33 @@ section { position: relative; z-index: 2; }
   color: var(--text-muted);
 }
 .pricing-note a { color: var(--cyan); text-decoration: none; }
+
+/* ---- PLAN CLAUSURADO ---- */
+.pricing-card.clausurado {
+  opacity: 0.45;
+  filter: grayscale(60%);
+  pointer-events: none;
+  transform: none !important;
+  box-shadow: none !important;
+}
+.clausurado-badge {
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #444;
+  color: #aaa;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 20px;
+}
+.pricing-cta.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
 
 /* ---- ROADMAP ---- */
 .roadmap {
@@ -1371,7 +1399,7 @@ footer {
 
   /* PRICING */
   .pricing-card   { padding: 26px 16px; }
-  .price-amount   { font-size: 2rem; }
+  .price-amount   { font-size: 1.75rem; }
   .pricing-impl   { font-size: 11px; }
   .pricing-cta    { font-size: 11px; padding: 12px; letter-spacing: 1px; }
 
@@ -1467,4 +1495,271 @@ footer {
   .marquee-track  { padding: 12px 0; }
   .marquee-item   { font-size: 9px; gap: 10px; }
   .marquee-item .dot { width: 3px; height: 3px; }
+}
+
+/* ============================================
+   MODAL DE CONTACTO
+   ============================================ */
+
+.contact-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+.contact-modal.open { display: flex; }
+
+.contact-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.contact-modal-box {
+  position: relative;
+  z-index: 1;
+  background: #060E18;
+  border: 1px solid rgba(0, 229, 255, 0.28);
+  border-radius: 18px;
+  padding: 2rem 2rem 1.75rem;
+  width: min(440px, 92vw);
+  box-shadow: 0 0 60px rgba(0, 229, 255, 0.08);
+  animation: modal-in 0.28s var(--transition) both;
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+.contact-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s;
+}
+.contact-modal-close:hover { border-color: var(--cyan); color: var(--cyan); }
+
+.contact-modal-title {
+  font-family: var(--font-head);
+  font-size: 1.15rem;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+}
+
+.contact-modal-sub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.contact-option {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  background: var(--glass);
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.contact-option-icon { font-size: 1.5rem; flex-shrink: 0; }
+
+.contact-option-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.contact-option-info strong { font-size: 0.9rem; color: var(--text); }
+.contact-option-info span   { font-size: 0.78rem; color: var(--text-muted); word-break: break-all; }
+
+.contact-option-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+.contact-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s, transform 0.15s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+}
+.contact-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+.contact-btn-copy {
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  color: var(--cyan);
+}
+
+.contact-btn-gmail {
+  background: rgba(234, 67, 53, 0.12);
+  border: 1px solid rgba(234, 67, 53, 0.40);
+  color: #EA4335;
+}
+
+.contact-btn-wa {
+  background: rgba(37, 211, 102, 0.12);
+  border: 1px solid rgba(37, 211, 102, 0.40);
+  color: #25D366;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.contact-btn-wa:hover { opacity: 0.85; transform: translateY(-1px); }
+
+.contact-modal-divider {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin: 0.25rem 0;
+}
+
+/* ============================================
+   REFINEMENTS — Estética Pro 2026
+   Shapes más suaves · Glass · Colores más sutiles
+   ============================================ */
+
+/* Variables reducidas — backgrounds más profundos, glows más suaves */
+:root {
+  --bg:           #030810;
+  --bg2:          #060C14;
+  --bg3:          #07101A;
+  --cyan-glow:    rgba(0,229,255,0.08);
+  --cyan-glow2:   rgba(0,229,255,0.03);
+  --glass:        rgba(255,255,255,0.03);
+  --glass-border: rgba(0,229,255,0.09);
+  --glass-border-h: rgba(0,229,255,0.28);
+}
+
+/* Nav — siempre sutilmente glásea, no solo al hacer scroll */
+.nav {
+  background: rgba(3,8,16,0.20);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.nav.scrolled {
+  background: rgba(3,8,16,0.90);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+}
+
+/* Nav CTA — pill */
+.nav-cta { border-radius: 100px; }
+
+/* Hero badge — pill */
+.hero-badge { border-radius: 100px; }
+
+/* CTA primary — redondeado, sin clip-path */
+.cta-primary {
+  clip-path: none;
+  border-radius: 12px;
+  text-decoration: none;
+}
+
+/* CTA secondary — sin subrayado pesado, línea sutil */
+.cta-secondary {
+  text-decoration: none;
+  border-bottom: 1px solid rgba(138,170,184,0.25);
+  padding-bottom: 2px;
+  transition: color 0.3s, border-color 0.3s;
+}
+.cta-secondary:hover { border-color: rgba(138,170,184,0.55); }
+
+/* Service cards — glassmorphism + bordes redondeados */
+.service-card {
+  clip-path: none;
+  border-radius: 20px;
+  background: rgba(5,14,25,0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.service-card.featured {
+  background: rgba(0,229,255,0.045);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Service icon — redondeado */
+.service-icon { border-radius: 14px; }
+
+/* Pricing cards — glassmorphism + bordes redondeados */
+.pricing-card {
+  clip-path: none;
+  border-radius: 20px;
+  background: rgba(7,16,28,0.60);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.pricing-card.popular {
+  background: rgba(0,22,42,0.75);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* Badges redondeados */
+.popular-badge    { border-radius: 0 0 10px 10px; }
+.clausurado-badge { border-radius: 0 0 10px 10px; }
+
+/* Pricing CTA — redondeado */
+.pricing-cta { border-radius: 10px; }
+
+/* Roadmap tags — pill */
+.roadmap-tag { border-radius: 100px; }
+
+/* Mobile CTA — redondeado */
+.mobile-nav-cta { border-radius: 12px; text-decoration: none; }
+
+/* Sección CTA — glow central más suave */
+.cta-section::before {
+  background: radial-gradient(circle, rgba(0,229,255,0.04) 0%, transparent 70%);
+}
+
+/* Manifesto — fondo ligeramente translúcido */
+.manifesto {
+  background: rgba(6,12,20,0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Footer — ligeramente gláseo */
+footer {
+  background: rgba(4,10,18,0.80);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Responsive: mantener border-radius en mobile, anular clip-path heredado */
+@media (max-width: 480px) {
+  .cta-primary  { clip-path: none; border-radius: 10px; }
+  .service-card { clip-path: none; border-radius: 16px; }
+  .pricing-card { clip-path: none; border-radius: 16px; }
 }

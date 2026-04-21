@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initChatWidget();
   initGlitchEffect();
   initHamburger();
+  initContactModal();
 });
 
 // ── CUSTOM CURSOR ────────────────────────────────────────────
@@ -174,19 +175,7 @@ function initPricingHover() {
 
 // ── CHAT WIDGET ───────────────────────────────────────────────
 function initChatWidget() {
-  const btn     = document.getElementById('chat-widget-btn');
-  const heroCta = document.getElementById('hero-chat-cta');
-  const navCta  = document.getElementById('nav-chat-cta');
-  const ctaBtn  = document.getElementById('section-chat-cta');
-
-  const openChat = () => {
-    const mailto = 'mailto:contacto@autoenvcl.cl?subject=Demo%20Agente%20AutoEnvCL&body=Hola%2C%20me%20interesa%20hablar%20con%20su%20agente%20de%20IA.';
-    window.location.href = mailto;
-  };
-
-  [btn, heroCta, navCta, ctaBtn].forEach(el => {
-    if (el) el.addEventListener('click', openChat);
-  });
+  // Los botones de contacto son <a href> directos a WhatsApp — no requieren JS.
 }
 
 // ── HAMBURGER MOBILE MENU ────────────────────────────────────
@@ -224,10 +213,7 @@ function initHamburger() {
   links.forEach(link => link.addEventListener('click', closeMenu));
 
   if (mobileCta) {
-    mobileCta.addEventListener('click', () => {
-      closeMenu();
-      document.getElementById('hero-chat-cta')?.click();
-    });
+    mobileCta.addEventListener('click', closeMenu);
   }
 
   // Cerrar menú al redimensionar a escritorio
@@ -240,6 +226,69 @@ function initHamburger() {
   // Tecla Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && btn.classList.contains('active')) closeMenu();
+  });
+}
+
+// ── MODAL DE CONTACTO ────────────────────────────────────────
+function initContactModal() {
+  const modal    = document.getElementById('contact-modal');
+  const overlay  = document.getElementById('contact-modal-overlay');
+  const closeBtn = document.getElementById('contact-modal-close');
+  const copyBtn  = document.getElementById('contact-copy-btn');
+  const gmailLink = document.getElementById('contact-gmail-link');
+  const waLink   = document.getElementById('contact-wa-link');
+  const subEl    = document.getElementById('contact-modal-sub');
+
+  const EMAIL = 'contacto@autoenv.cl';
+  const WA_BASE = 'https://wa.me/56990632995?text=';
+
+  window.openContactModal = (plan) => {
+    const subject = plan
+      ? `Interesado en ${plan} — AutoEnvCL`
+      : 'Consulta — AutoEnvCL';
+    const body = plan
+      ? `Hola, me interesa el ${plan} de AutoEnvCL. Quedo atento a su respuesta.`
+      : 'Hola, me interesa conocer más sobre AutoEnvCL.';
+    const waText = plan
+      ? `Hola, me interesa el ${plan} de AutoEnvCL. ¿Podemos hablar?`
+      : 'Hola, me interesa conocer más sobre AutoEnvCL. ¿Podemos hablar?';
+
+    subEl.textContent = plan ? `Interesado en el ${plan}` : 'Elige cómo prefieres escribirnos';
+    gmailLink.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${EMAIL}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    waLink.href    = WA_BASE + encodeURIComponent(waText);
+
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    closeBtn.focus();
+  };
+
+  const closeModal = () => {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    copyBtn.textContent = 'Copiar';
+  };
+
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', closeModal);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(EMAIL).then(() => {
+      copyBtn.textContent = '¡Copiado!';
+      setTimeout(() => { copyBtn.textContent = 'Copiar'; }, 2000);
+    }).catch(() => {
+      // Fallback para navegadores sin clipboard API
+      const ta = document.createElement('textarea');
+      ta.value = EMAIL;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      copyBtn.textContent = '¡Copiado!';
+      setTimeout(() => { copyBtn.textContent = 'Copiar'; }, 2000);
+    });
   });
 }
 

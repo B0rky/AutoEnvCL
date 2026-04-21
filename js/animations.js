@@ -254,7 +254,7 @@ function initContactModal() {
       : 'Hola, me interesa conocer más sobre AutoEnvCL. ¿Podemos hablar?';
 
     subEl.textContent = plan ? `Interesado en el ${plan}` : 'Elige cómo prefieres escribirnos';
-    gmailLink.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${EMAIL}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    gmailLink.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     waLink.href    = WA_BASE + encodeURIComponent(waText);
 
     modal.classList.add('open');
